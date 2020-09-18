@@ -1,0 +1,7 @@
+/node_modules
+/build
+/cache
+/artifacts
+.DS_Store
+/artifacts
+getDeployCode.js
