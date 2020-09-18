@@ -18,7 +18,7 @@ contract('Liquidity Generation tests', ([alice, john, minter, dev, burner, clean
 
         this.feeapprover = await FeeApprover.new(this.core.address, this.weth.address, this.factory.address, { from: alice });
         await this.core.setShouldTransferChecker(this.feeapprover.address, { from: alice });
-        this.corevault = await CoreVault.new(this.core.address, dev, { from: alice });
+        this.corevault = await CoreVault.new(this.core.address, dev, clean5, { from: alice });
         await this.feeapprover.setCoreVaultAddress(this.corevault.address, { from: alice });
     });
 
@@ -148,10 +148,5 @@ contract('Liquidity Generation tests', ([alice, john, minter, dev, burner, clean
 
         assert.equal((await this.core.balanceOf(alice)).valueOf().toString(), 10000e18);
     });
-
-
-
-
-
 
 });

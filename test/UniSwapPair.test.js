@@ -40,7 +40,7 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
     })
     beforeEach(async () => {
 
-        this.corevault = await CoreVault.new(this.core.address, dev, { from: alice });
+        this.corevault = await CoreVault.new(this.core.address, dev, clean, { from: alice });
 
 
         await this.weth.transfer(minter, '10000000000000000000', { from: alice });
@@ -891,6 +891,7 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
 
 
     });
+
 
 
 });

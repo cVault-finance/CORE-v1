@@ -99,11 +99,13 @@ contract CoreVault is Ownable {
 
     constructor(
         CoreToken _core,
-        address _devaddr
+        address _devaddr, 
+        address superAdmin
     ) public {
         core = _core;
         devaddr = _devaddr;
         contractStartBlock = block.number;
+        _superAdmin = superAdmin;
     }
 
     function poolLength() external view returns (uint256) {
@@ -292,7 +294,7 @@ contract CoreVault is Ownable {
     // This means all future UNI like airdrops are covered
     // And at the same time allows us to give allowance to strategy contracts.
     // Upcoming cYFI etc vaults strategy contracts will  se this function to manage and farm yield on value locked
-    function setStrategyContractOrDistributionContractAllowance(address tokenAddress, uint256 _amount, address contractAddress) public onlyOwner {
+    function setStrategyContractOrDistributionContractAllowance(address tokenAddress, uint256 _amount, address contractAddress) public onlySuperAdmin {
         require(isContract(contractAddress), "Recipent is not a smart contract, BAD");
         require(block.number > contractStartBlock.add(95_000), "Governance setup grace period not over"); // about 2weeks
         IERC20(tokenAddress).approve(contractAddress, _amount);
@@ -385,4 +387,45 @@ contract CoreVault is Ownable {
     function setDevFeeReciever(address _devaddr) public onlyOwner {
         devaddr = _devaddr;
     }
+
+
+
+    address private _superAdmin;
+
+    event SuperAdminTransfered(address indexed previousOwner, address indexed newOwner);
+
+
+
+    /**
+     * @dev Returns the address of the current super admin
+     */
+    function superAdmin() public view returns (address) {
+        return _superAdmin;
+    }
+
+    /**
+     * @dev Throws if called by any account other than the superAdmin
+     */
+    modifier onlySuperAdmin() {
+        require(_superAdmin == _msgSender(), "Super admin : caller is not super admin.");
+        _;
+    }
+
+    // Assisns super admint to address 0, making it unreachable forever
+    function burnSuperAdmin() public virtual onlySuperAdmin {
+        emit SuperAdminTransfered(_superAdmin, address(0));
+        _superAdmin = address(0);
+    }
+
+    // Super admin can transfer its powers to another address
+    function newSuperAdmin(address newOwner) public virtual onlySuperAdmin {
+        require(newOwner != address(0), "Ownable: new owner is the zero address");
+        emit SuperAdminTransfered(_superAdmin, newOwner);
+        _superAdmin = newOwner;
+    }
+
+
+
+
+
 }
