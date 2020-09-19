@@ -149,4 +149,15 @@ contract('Liquidity Generation tests', ([alice, john, minter, dev, burner, clean
         assert.equal((await this.core.balanceOf(alice)).valueOf().toString(), 10000e18);
     });
 
+    it("Super admin works as expected", async () => {
+
+
+        await expectRevert(this.corevault.setStrategyContractOrDistributionContractAllowance(this.core.address, '1', this.core.address, { from: alice }), "Super admin : caller is not super admin.")
+        await expectRevert(this.corevault.setStrategyContractOrDistributionContractAllowance(this.core.address, '1', this.core.address, { from: clean5 }), "Governance setup grace period not over")
+    })
+
+
+
+
+
 });
