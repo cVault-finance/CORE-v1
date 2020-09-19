@@ -71,9 +71,9 @@ contract NBUNIERC20 is Context, INBUNIERC20, Ownable {
         return _name;
     }
 
-    function initialSetup(string memory name, string memory symbol, address router, address factory) internal {
-        _name = name;
-        _symbol = symbol;
+    function initialSetup(address router, address factory) internal {
+        _name = "cVault.finance";
+        _symbol = "CORE";
         _decimals = 18;
         _mint(address(this), initialSupply);
         contractStartTimestamp = block.timestamp;
