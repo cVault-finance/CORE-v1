@@ -1,4 +1,4 @@
-const CoreToken = artifacts.require('CoreToken');
+const CoreToken = artifacts.require('CORE');
 const CoreVault = artifacts.require('CoreVault');
 const { expectRevert, time } = require('@openzeppelin/test-helpers');
 const WETH9 = artifacts.require('WETH9');

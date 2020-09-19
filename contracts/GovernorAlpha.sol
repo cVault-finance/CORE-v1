@@ -13,7 +13,7 @@
 pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
 
-import "./CoreToken.sol";
+import "./CORE.sol";
 
 contract GovernorAlpha {
     /// @notice The name of this contract
@@ -42,7 +42,7 @@ contract GovernorAlpha {
 
     /// @notice The address of the Compound governance token
     // XXX: CompInterface public comp;
-    CoreToken public core;
+    CORE public core;
 
     /// @notice The address of the Governor Guardian
     address public guardian;
@@ -147,7 +147,7 @@ contract GovernorAlpha {
 
     constructor(address timelock_, address core_, address guardian_) public {
         timelock = TimelockInterface(timelock_);
-        core = CoreToken(core_);
+        core = CORE(core_);
         guardian = guardian_;
     }
 

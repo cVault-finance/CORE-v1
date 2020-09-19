@@ -1,5 +1,5 @@
 const { bigNumberify, defaultAbiCoder, BigNumber } = require('ethers/utils')
-const CoreToken = artifacts.require('CoreToken');
+const CoreToken = artifacts.require('CORE');
 const { expectRevert, time } = require('@openzeppelin/test-helpers');
 const CoreVault = artifacts.require('CoreVault');
 

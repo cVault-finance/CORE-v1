@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 // CoreToken with Governance.
-contract CoreToken is NBUNIERC20 {
+contract CORE is NBUNIERC20 {
 
 
         /**
