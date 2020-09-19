@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 // CoreToken with Governance.
-contract CoreToken is NBUNIERC20 {
+contract CORE is NBUNIERC20 {
 
 
         /**
@@ -19,9 +19,9 @@ contract CoreToken is NBUNIERC20 {
      * All three of these values are immutable: they can only be set once during
      * construction.
      */
-    constructor(string memory name, string memory symbol, address router, address factory) public {
+    constructor(address router, address factory) public {
 
-        initialSetup(name, symbol, router, factory);
+        initialSetup(router, factory);
         // _name = name;
         // _symbol = symbol;
         // _decimals = 18;

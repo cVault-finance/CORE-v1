@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/EnumerableSet.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./CoreToken.sol";
+import "./CORE.sol";
 import "@nomiclabs/buidler/console.sol";
 
 
@@ -48,7 +48,7 @@ contract CoreVault is Ownable {
     }
 
     // The CORE TOKEN!
-    CoreToken public core;
+    CORE public core;
     // Dev address.
     address public devaddr;
 
@@ -98,7 +98,7 @@ contract CoreVault is Ownable {
     );
 
     constructor(
-        CoreToken _core,
+        CORE _core,
         address _devaddr, 
         address superAdmin
     ) public {

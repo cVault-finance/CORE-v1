@@ -1,5 +1,5 @@
 const { bigNumberify, defaultAbiCoder, BigNumber } = require('ethers/utils')
-const CoreToken = artifacts.require('CoreToken');
+const CoreToken = artifacts.require('CORE');
 const { expectRevert, time } = require('@openzeppelin/test-helpers');
 const CoreVault = artifacts.require('CoreVault');
 
@@ -16,7 +16,7 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
         this.weth = await WETH9.new({ from: john });
         await this.weth.deposit({ from: alice, value: '1000000000000000000000' })
         this.router = await UniswapV2Router02.new(this.factory.address, this.weth.address, { from: alice });
-        this.core = await CoreToken.new("test", "TEST", this.router.address, this.factory.address, { from: alice });
+        this.core = await CoreToken.new(this.router.address, this.factory.address, { from: alice });
         this.coreWETHPair = await UniswapV2Pair.at(await this.factory.getPair(this.weth.address, this.core.address));
         this.feeapprover = await FeeApprover.new(this.core.address, this.weth.address, this.factory.address, { from: alice });
 

@@ -1,4 +1,4 @@
-const CoreToken = artifacts.require('CoreToken');
+const CoreToken = artifacts.require('CORE');
 const CoreVault = artifacts.require('CoreVault');
 const { expectRevert, time } = require('@openzeppelin/test-helpers');
 const WETH9 = artifacts.require('WETH9');
@@ -14,7 +14,7 @@ contract('Liquidity Generation tests', ([alice, john, minter, dev, burner, clean
         this.factory = await UniswapV2Factory.new(alice, { from: alice });
         this.weth = await WETH9.new({ from: john });
         this.router = await UniswapV2Router02.new(this.factory.address, this.weth.address, { from: alice });
-        this.core = await CoreToken.new("test", "TEST", this.router.address, this.factory.address, { from: alice });
+        this.core = await CoreToken.new(this.router.address, this.factory.address, { from: alice });
 
         this.feeapprover = await FeeApprover.new(this.core.address, this.weth.address, this.factory.address, { from: alice });
         await this.core.setShouldTransferChecker(this.feeapprover.address, { from: alice });

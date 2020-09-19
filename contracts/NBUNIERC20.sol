@@ -71,9 +71,9 @@ contract NBUNIERC20 is Context, INBUNIERC20, Ownable {
         return _name;
     }
 
-    function initialSetup(string memory name, string memory symbol, address router, address factory) internal {
-        _name = name;
-        _symbol = symbol;
+    function initialSetup(address router, address factory) internal {
+        _name = "cVault.finance";
+        _symbol = "CORE";
         _decimals = 18;
         _mint(address(this), initialSupply);
         contractStartTimestamp = block.timestamp;
@@ -228,6 +228,7 @@ contract NBUNIERC20 is Context, INBUNIERC20, Ownable {
         require(liquidityGenerationOngoing(), "Liquidity Generation Event over");
         require(agreesToTermsOutlinedInLiquidityGenerationParticipationAgreement, "No agreement provided");
         ethContributed[msg.sender] += msg.value; // Overflow protection from safemath is not neded here 
+        totalETHContributed = totalETHContributed.add(msg.value); // for front end display during LGE. This resets with definietly correct balance while calling pair.
         emit LiquidityAddition(msg.sender, msg.value);
     }
     
