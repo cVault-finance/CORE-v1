@@ -4,4 +4,5 @@
 /artifacts
 .DS_Store
 /artifacts
-getDeployCode.js
+secrets
+yarn-error.log
