@@ -228,6 +228,7 @@ contract NBUNIERC20 is Context, INBUNIERC20, Ownable {
         require(liquidityGenerationOngoing(), "Liquidity Generation Event over");
         require(agreesToTermsOutlinedInLiquidityGenerationParticipationAgreement, "No agreement provided");
         ethContributed[msg.sender] += msg.value; // Overflow protection from safemath is not neded here 
+        totalETHContributed = totalETHContributed.add(msg.value); // for front end display during LGE. This resets with definietly correct balance while calling pair.
         emit LiquidityAddition(msg.sender, msg.value);
     }
     
