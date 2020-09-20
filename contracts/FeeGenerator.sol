@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 
 // Contract that sends tokens it gets to itself
-// Meaning it generate fees with fee on transfer tokens
+// Making it generate fees with fee on transfer tokens
 contract FeeGenerator {
 
     function transferToSelf(address tokenAddress, uint256 loopCount) public {
