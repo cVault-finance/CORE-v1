@@ -28,6 +28,14 @@ const unpackArtifact = (artifactPath) => {
     }
 }
 
+const deployTokenFromSigner = (contractABI, contractBytecode, wallet, args = []) => {
+
+    const factory = new ContractFactory(contractABI, contractBytecode)
+    let deployTx = factory.getDeployTransaction(...args)
+    console.log(deployTx)
+    // deployTokenFromSigner(tokenUnpacked.abi, tokenUnpacked.bytecode, provider, tokenArgs)
+}
+
 const getContractDeployTx = (contractABI, contractBytecode, wallet, provider, args = []) => {
     const factory = new ContractFactory(contractABI, contractBytecode, wallet.connect(provider))
     let txRequest = factory.getDeployTransaction(...args)
@@ -39,15 +47,14 @@ const deployContract = async (contractABI, contractBytecode, wallet, provider, a
     return await factory.deploy(...args);
 }
 
-const deployCOREToken = async (mnemonic, mainnet = false) => {
+const deployCOREToken = async (mnemonic = "", mainnet = false) => {
 
     // Get the built metadata for our contracts
-    let tokenUnpacked = unpackArtifact("./artifacts/CoreToken.json")
+    let tokenUnpacked = unpackArtifact("./artifacts/CORE.json")
+    console.log(tokenUnpacked.description)
     // let chefUnpacked = unpackArtifact("./artifacts/MasterChef.json")
     let feeApproverUnpacked = unpackArtifact("./artifacts/FeeApprover.json")
 
-    // Create a wallet and connect it to a network
-    const wallet = Wallet.fromMnemonic(mnemonic);
     let provider;
     let wethAddress;
     const uniswapFactoryAddress = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f";
@@ -63,15 +70,23 @@ const deployCOREToken = async (mnemonic, mainnet = false) => {
 
     // Do the deployments
 
-    const connectedWallet = wallet.connect(provider);
+    // Create a wallet and connect it to a network
     // First, the token
-    // constructor(string memory name, string memory symbol, address router, address factory)
+    // constructor(address router, address factory)
     const tokenArgs = [
-        "FORE",
-        "FORE",
         uniswapRouterAddress,
         uniswapFactoryAddress
     ]
+    if(mnemonic != "") {
+        const wallet = Wallet.fromMnemonic(mnemonic);
+        const connectedWallet = wallet.connect(provider);
+    }
+    else {
+        deployTokenFromSigner(tokenUnpacked.abi, tokenUnpacked.bytecode, provider, tokenArgs)
+    }
+    return;
+
+    // using soft mnemonic
     const token = await deployContract(tokenUnpacked.abi, tokenUnpacked.bytecode, wallet, provider, tokenArgs)
     console.log(`⌛ Deploying token...`)
     await connectedWallet.provider.waitForTransaction(token.deployTransaction.hash)
@@ -113,4 +128,4 @@ const deployCOREToken = async (mnemonic, mainnet = false) => {
 
 }
 
-getLedgerSigner();
+deployCOREToken();

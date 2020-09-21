@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx buidler compile",
     "deploy": "node getDeployCode.js",
-    "verify": "YFLOCK-v1-core % npx buidler verify --network kovan 0xdd8144c329000591cf205a4d6a66ce898fa501c6 'FORE' 'FORE' '0x7a250d5630b4cf539739df2c5dacb4c659f2488d' '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'"
+    "verify": "npx buidler verify --network mainnet 0x62359ed7505efc61ff1d56fef82158ccaffa23d7 '0x7a250d5630b4cf539739df2c5dacb4c659f2488d' '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^3.1.0",
