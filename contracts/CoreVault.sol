@@ -78,10 +78,14 @@ contract CoreVault is Ownable {
         averagePerBlock = rewardsInThisEpoch.div(block.number.sub(epochCalculationStartBlock));
     }
 
+    // For easy graphing historical epoch rewards
+    mapping(uint => uint256) public epochRewards;
+
     //Starts a new calculation epoch
     // Because averge since start will not be accurate
     function startNewEpoch() public {
         require(epochCalculationStartBlock + 50000 < block.number, "New epoch not ready yet"); // About a week
+        epochRewards[epoch] = rewardsInThisEpoch;
         cumulativeRewardsSinceStart = cumulativeRewardsSinceStart.add(rewardsInThisEpoch);
         rewardsInThisEpoch = 0;
         epochCalculationStartBlock = block.number;
