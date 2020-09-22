@@ -1,11 +1,12 @@
 {
-  "name": "CoreVault",
+  "name": "corevault",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
     "build": "npx buidler compile",
-    "deploy": "node getDeployCode.js"
+    "deploy": "node getDeployCode.js",
+    "verify": "npx buidler verify --network mainnet 0x62359ed7505efc61ff1d56fef82158ccaffa23d7 '0x7a250d5630b4cf539739df2c5dacb4c659f2488d' '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^3.1.0",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@nomiclabs/buidler": "^1.4.5",
+    "@nomiclabs/buidler-etherscan": "^2.1.0",
     "@nomiclabs/buidler-truffle5": "^1.3.4",
     "@nomiclabs/buidler-web3": "^1.3.4",
     "buidler-log-remover": "^1.0.1",
