@@ -44,7 +44,7 @@ contract CoreVault is Ownable {
         uint256 allocPoint; // How many allocation points assigned to this pool. COREs to distribute per block.
         uint256 accCorePerShare; // Accumulated COREs per share, times 1e12. See below.
         bool withdrawable; // Is this pool withdrawable?
-        address migrationAddress;
+        address migrationAddress; // Migration address of each pool, migration is voluntary
     }
 
     // The CORE TOKEN!
@@ -212,11 +212,14 @@ contract CoreVault is Ownable {
         }
 
         pendingRewards = pendingRewards.sub(allRewards);
-
-
-
     }
 
+    // ----
+    // Function that adds pending rewards, called by the CORE token.
+    // After sending the amount of CORE into it.
+    // This would be cleaner if it queried its balance of CORE
+    // But this is impossible since this contract holds CORE that is not pending, but claimable by individuals.
+    // ----
     function addPendingRewards(uint256 _amount) public {
         require(msg.sender == address(core), "BAD!");
         pendingRewards = pendingRewards.add(_amount);
@@ -231,9 +234,9 @@ contract CoreVault is Ownable {
         if (tokenSupply == 0) { // avoids division by 0 errors
             return 0;
         }
-        coreRewardWhole = pendingRewards
-            .mul(pool.allocPoint)
-            .div(totalAllocPoint);
+        coreRewardWhole = pendingRewards // Multiplies pending rewards by allocation point of this pool and then total allocation
+            .mul(pool.allocPoint)        // getting the percent of total pending rewards this pool should get
+            .div(totalAllocPoint);       // we can do this because pools are only mass updated
         uint256 coreRewardFee = coreRewardWhole.mul(DEV_FEE).div(10000);
         uint256 coreRewardToDistribute = coreRewardWhole.sub(coreRewardFee);
         
@@ -252,22 +255,29 @@ contract CoreVault is Ownable {
         UserInfo storage user = userInfo[_pid][msg.sender];
 
         massUpdatePools();
-
+        
+        // Transfer pending tokens
+        // to user
         if (user.amount > 0) {
             uint256 pending = user
                 .amount
                 .mul(pool.accCorePerShare)
                 .div(1e12)
                 .sub(user.rewardDebt);
-            safeCoreTransfer(msg.sender, pending);
+            if(pending > 0) {
+                safeCoreTransfer(msg.sender, pending);
+            }
         }
 
-        pool.token.safeTransferFrom(address(msg.sender), address(this), _amount);
-        user.amount = user.amount.add(_amount);
+        //Transfer in the amounts from user
+        // save gas
+        if(_amount > 0) {
+            pool.token.safeTransferFrom(address(msg.sender), address(this), _amount);
+            user.amount = user.amount.add(_amount);
+        }
+
         user.rewardDebt = user.amount.mul(pool.accCorePerShare).div(1e12);
         emit Deposit(msg.sender, _pid, _amount);
-
-        pendingRewards = 0;
     }
     
 
@@ -284,13 +294,18 @@ contract CoreVault is Ownable {
             .mul(pool.accCorePerShare)
             .div(1e12)
             .sub(user.rewardDebt);
-        safeCoreTransfer(msg.sender, pending);
+        if(pending > 0) {
+            safeCoreTransfer(msg.sender, pending);
+        }
 
-        user.amount = user.amount.sub(_amount);
+        if(_amount > 0) {
+            user.amount = user.amount.sub(_amount);
+            pool.token.safeTransfer(address(msg.sender), _amount);
+        }
+
         user.rewardDebt = user.amount.mul(pool.accCorePerShare).div(1e12);
-        pool.token.safeTransfer(address(msg.sender), _amount);
+
         emit Withdraw(msg.sender, _pid, _amount);
-        pendingRewards = 0;
     }
 
     // function that lets owner/governance contract
@@ -312,6 +327,8 @@ contract CoreVault is Ownable {
 
 
     // Alows for volunarty transfer to new contract.
+    // This is basically the same as the withdraw function
+    // But to the migration address, this is purely for user experience
     function migrate(uint256 _pid, uint256 _amount) public {
         PoolInfo storage pool = poolInfo[_pid];
         require(pool.migrationAddress != address(0), "This pool has no migration address");
@@ -326,14 +343,18 @@ contract CoreVault is Ownable {
             .mul(pool.accCorePerShare)
             .div(1e12)
             .sub(user.rewardDebt);
-        safeCoreTransfer(msg.sender, pending);
 
-        user.amount = user.amount.sub(_amount);
+        if(pending > 0){
+            safeCoreTransfer(msg.sender, pending);
+        }
+
+        if(_amount > 0) {
+            user.amount = user.amount.sub(_amount);
+            pool.token.safeTransfer(pool.migrationAddress, _amount); // this will require the migrator contract to intercept ERC20 txs
+        }
+
         user.rewardDebt = user.amount.mul(pool.accCorePerShare).div(1e12);
-        pool.token.safeTransfer(pool.migrationAddress, _amount);
-        emit Migration(msg.sender, _pid, _amount);
-         
-        pendingRewards = 0;
+        emit Migration(msg.sender, _pid, _amount);         
     }
 
     // Sets migration address of the pool
@@ -346,6 +367,7 @@ contract CoreVault is Ownable {
 
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.
+    // !Caution this will remove all your pending rewards!
     function emergencyWithdraw(uint256 _pid) public {
         PoolInfo storage pool = poolInfo[_pid];
         require(pool.withdrawable, "Withdrawing from this pool is disabled");
@@ -373,6 +395,8 @@ contract CoreVault is Ownable {
 
         if(pending_DEV_rewards == 0) return; // save gas
 
+        // transfers all pending DEV rewards to dev
+        // Safely as well.
         coreBal = core.balanceOf(address(this));
         if (pending_DEV_rewards > coreBal) {
             console.log("transfering out to dev amount:", _amount);
@@ -427,9 +451,4 @@ contract CoreVault is Ownable {
         emit SuperAdminTransfered(_superAdmin, newOwner);
         _superAdmin = newOwner;
     }
-
-
-
-
-
 }
