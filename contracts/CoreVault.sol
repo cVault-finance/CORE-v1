@@ -208,7 +208,6 @@ contract CoreVault is Ownable {
         }
 
         pendingRewards = pendingRewards.sub(allRewards);
-        require(pendingRewards == 0,"");
     }
 
     // ----
