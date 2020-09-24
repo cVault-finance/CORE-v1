@@ -9,12 +9,6 @@ import "./CORE.sol";
 import "@nomiclabs/buidler/console.sol";
 
 
-
-// Function that allows people voluntarly migrate into a new pool contract
-interface IMigrateToken {
-    function deposit() external returns (bool);
-}
-
 // Core Vault distributes fees equally amongst staked pools
 // Have fun reading it. Hopefully it's bug-free. God bless.
 contract CoreVault is Ownable {
@@ -44,7 +38,6 @@ contract CoreVault is Ownable {
         uint256 allocPoint; // How many allocation points assigned to this pool. COREs to distribute per block.
         uint256 accCorePerShare; // Accumulated COREs per share, times 1e12. See below.
         bool withdrawable; // Is this pool withdrawable?
-        address migrationAddress; // Migration address of each pool, migration is voluntary
     }
 
     // The CORE TOKEN!
@@ -92,7 +85,6 @@ contract CoreVault is Ownable {
         ++epoch;
     }
 
-    event Migration(address indexed user, uint256 indexed pid, uint256 amount);
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event EmergencyWithdraw(
@@ -143,8 +135,7 @@ contract CoreVault is Ownable {
                 token: _token,
                 allocPoint: _allocPoint,
                 accCorePerShare: 0,
-                withdrawable : _withdrawable,
-                migrationAddress : address(0)
+                withdrawable : _withdrawable
             })
         );
     }
@@ -326,44 +317,7 @@ contract CoreVault is Ownable {
     }
 
 
-    // Alows for volunarty transfer to new contract.
-    // This is basically the same as the withdraw function
-    // But to the migration address, this is purely for user experience
-    function migrate(uint256 _pid, uint256 _amount) public {
-        PoolInfo storage pool = poolInfo[_pid];
-        require(pool.migrationAddress != address(0), "This pool has no migration address");
-        require(pool.withdrawable, "migration from this pool disabled");
-        UserInfo storage user = userInfo[_pid][msg.sender];
-        require(user.amount >= _amount, "migrate: not good");
 
-        massUpdatePools();
-  
-        uint256 pending = user
-            .amount
-            .mul(pool.accCorePerShare)
-            .div(1e12)
-            .sub(user.rewardDebt);
-
-        if(pending > 0){
-            safeCoreTransfer(msg.sender, pending);
-        }
-
-        if(_amount > 0) {
-            user.amount = user.amount.sub(_amount);
-            pool.token.safeTransfer(pool.migrationAddress, _amount); // this will require the migrator contract to intercept ERC20 txs
-        }
-
-        user.rewardDebt = user.amount.mul(pool.accCorePerShare).div(1e12);
-        emit Migration(msg.sender, _pid, _amount);         
-    }
-
-    // Sets migration address of the pool
-    // Note onlyOwner functions are meant for the governance contract
-    // allowing CORE governance token holders to do this functions.
-    function setPoolMigrationAddress(uint256 _pid, address _migrationAddress) public onlyOwner {
-        PoolInfo storage pool = poolInfo[_pid];
-        pool.migrationAddress = _migrationAddress;
-    }
 
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.
