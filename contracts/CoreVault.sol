@@ -208,6 +208,7 @@ contract CoreVault is Ownable {
         }
 
         pendingRewards = pendingRewards.sub(allRewards);
+        require(pendingRewards == 0,"");
     }
 
     // ----
@@ -269,9 +270,9 @@ contract CoreVault is Ownable {
     }
 
     // Test coverage
-    // [] Does user get the deposited amounts?
-    // [] Does user that its deposited for update correcty?
-    // [] Does the depositor get their tokens decreased
+    // [x] Does user get the deposited amounts?
+    // [x] Does user that its deposited for update correcty?
+    // [x] Does the depositor get their tokens decreased
     function depositFor(address depositFor, uint256 _pid, uint256 _amount) public {
         // requires no allowances
         PoolInfo storage pool = poolInfo[_pid];
@@ -294,7 +295,7 @@ contract CoreVault is Ownable {
     }
 
     // Test coverage
-    // [] Does allowance update correctly?
+    // [x] Does allowance update correctly?
     function setAllowanceForPoolToken(address spender, uint256 _pid, uint256 value) public {
         PoolInfo storage pool = poolInfo[_pid];
         pool.allowance[msg.sender][spender] = value;
@@ -302,9 +303,9 @@ contract CoreVault is Ownable {
     }
 
     // Test coverage
-    // [] Does allowance decrease?
-    // [] Do oyu need allowance
-    // [] Withdraws to correct address
+    // [x] Does allowance decrease?
+    // [x] Do oyu need allowance
+    // [x] Withdraws to correct address
     function withdrawFrom(address owner, uint256 _pid, uint256 _amount) public{
         
         PoolInfo storage pool = poolInfo[_pid];

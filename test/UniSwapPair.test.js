@@ -9,7 +9,7 @@ const UniswapV2Factory = artifacts.require('UniswapV2Factory');
 const FeeApprover = artifacts.require('FeeApprover');
 const UniswapV2Router02 = artifacts.require('UniswapV2Router02');
 
-contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3, clean4, clean5]) => {
+contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3, clean4, clean5, clean6]) => {
     before(async () => {
 
         this.factory = await UniswapV2Factory.new(alice, { from: alice });
@@ -19,6 +19,7 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
         this.core = await CoreToken.new(this.router.address, this.factory.address, { from: alice });
         this.coreWETHPair = await UniswapV2Pair.at(await this.factory.getPair(this.weth.address, this.core.address));
         this.feeapprover = await FeeApprover.new(this.core.address, this.weth.address, this.factory.address, { from: alice });
+        await this.feeapprover.setPaused(false, { from: alice });
 
         await this.core.addLiquidity(true, { from: minter, value: '1000000000000000000' });
         await time.increase(60 * 60 * 24 * 7 + 1);
@@ -175,11 +176,7 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
         await this.corevault.deposit(0, "0", { from: clean3 });
 
         assert.equal((await this.core.balanceOf(this.corevault.address)).valueOf().toString(), '0');
-
         assert.equal((await this.core.balanceOf(clean3)).valueOf().toString(), "4500");
-
-
-
     });
 
 
@@ -235,8 +232,6 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
         assert.equal((await this.core.balanceOf(this.corevault.address)).valueOf().toString(), '0');
 
         assert.equal((await this.core.balanceOf(clean4)).valueOf().toString(), "45000");
-
-
 
     });
 
@@ -425,12 +420,15 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
         await this.corevault.setPoolWithdrawable(0, true, { from: alice });
         await this.corevault.emergencyWithdraw(0, { from: minter });
     });
+
     it('Doesnt let other people than owner set withdrawable of pool', async () => {
         await this.corevault.add('100', this.coreWETHPair.address, true, false, { from: alice });
         await this.corevault.setPoolWithdrawable(0, false, { from: alice });
         await expectRevert(this.corevault.setPoolWithdrawable(0, false, { from: minter }), "Ownable: caller is not the owner");
         await expectRevert(this.corevault.setPoolWithdrawable(0, false, { from: john }), "Ownable: caller is not the owner");
     });
+
+
 
     it("Gives dev fees correctly", async () => {
         let balanceOfDev = (await this.core.balanceOf(dev)).valueOf().toNumber()
@@ -519,6 +517,57 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
 
     });
 
+    it('Should not let people withdraw for someone without approval and updates allowances correctly', async () => {
+        await this.core.setFeeDistributor(this.corevault.address, { from: alice });
+        await this.feeapprover.setFeeMultiplier(10, { from: alice })
+
+        await this.corevault.add('100', this.coreWETHPair.address, true, true, { from: alice });
+        await this.coreWETHPair.transfer(clean2, '100', { from: minter });
+        await this.coreWETHPair.approve(this.corevault.address, '10000000000000', { from: clean2 });
+        await this.corevault.deposit(0, "100", { from: clean2 });
+        await this.core.transfer(burner, '1000', { from: minter })
+
+        // function withdrawFrom(address owner, uint256 _pid, uint256 _amount) public{
+
+        await expectRevert(this.corevault.withdrawFrom(clean2, 0, '100', { from: minter }), "withdraw: insufficient allowance");
+        await expectRevert(this.corevault.withdrawFrom(clean2, 0, '100', { from: alice }), "withdraw: insufficient allowance");
+        await expectRevert(this.corevault.withdrawFrom(clean2, 0, '100', { from: clean3 }), "withdraw: insufficient allowance");
+        await expectRevert(this.corevault.withdrawFrom(clean2, 0, '100', { from: clean }), "withdraw: insufficient allowance");
+        await expectRevert(this.corevault.withdrawFrom(clean2, 0, '100', { from: clean2 }), "withdraw: insufficient allowance");
+
+        await this.corevault.setAllowanceForPoolToken(clean6, 0, '100', { from: clean2 });
+        await this.corevault.withdrawFrom(clean2, 0, '100', { from: clean6 });
+
+        await this.corevault.deposit(0, "100", { from: clean2 });
+        await expectRevert(this.corevault.withdrawFrom(clean2, 0, '100', { from: clean6 }), "withdraw: insufficient allowance");
+        await this.corevault.setAllowanceForPoolToken(clean6, 0, '100', { from: clean2 });
+        await this.corevault.withdrawFrom(clean2, 0, '100', { from: clean6 });
+
+        await expectRevert(this.corevault.withdrawFrom(clean2, 0, '100', { from: clean6 }), "withdraw: insufficient allowance")
+        await this.corevault.setAllowanceForPoolToken(clean6, 0, '100', { from: clean2 });
+
+        await expectRevert(this.corevault.withdrawFrom(clean2, 0, '100', { from: clean6 }), "withdraw: not good")
+
+        assert.equal((await this.coreWETHPair.balanceOf(clean6)).valueOf().toString(), '200');
+
+    });
+
+    it('Should have correct balances for deposit for', async () => {
+        await this.core.setFeeDistributor(this.corevault.address, { from: alice });
+        await this.feeapprover.setFeeMultiplier(10, { from: alice })
+
+        await this.corevault.add('100', this.coreWETHPair.address, true, true, { from: alice });
+        await this.coreWETHPair.transfer(clean2, '100', { from: minter });
+        await this.coreWETHPair.approve(this.corevault.address, '10000000000000', { from: clean2 });
+        await expectRevert(this.corevault.withdraw(0, '100', { from: clean6 }), 'withdraw: not good')
+
+        await this.corevault.depositFor(clean6, 0, "100", { from: clean2 });
+        await this.core.transfer(burner, '1000', { from: minter });
+        await this.corevault.withdraw(0, '100', { from: clean6 })
+        assert.notEqual(await this.core.balanceOf(clean6).valueOf().toString(), '0');// got fes
+        await expectRevert(this.corevault.withdraw(0, '100', { from: clean6 }), 'withdraw: not good')
+
+    });
 
 
 
