@@ -30,6 +30,7 @@ contract CoreVault is Ownable {
         //   2. User receives the pending reward sent to his/her address.
         //   3. User's `amount` gets updated.
         //   4. User's `rewardDebt` gets updated.
+
     }
 
     // Info of each pool.
@@ -38,6 +39,8 @@ contract CoreVault is Ownable {
         uint256 allocPoint; // How many allocation points assigned to this pool. COREs to distribute per block.
         uint256 accCorePerShare; // Accumulated COREs per share, times 1e12. See below.
         bool withdrawable; // Is this pool withdrawable?
+        mapping(address => mapping(address => uint256)) allowance;
+
     }
 
     // The CORE TOKEN!
@@ -92,6 +95,8 @@ contract CoreVault is Ownable {
         uint256 indexed pid,
         uint256 amount
     );
+    event Approval(address indexed owner, address indexed spender, uint256 _pid, uint256 value);
+
 
     constructor(
         CORE _core,
@@ -249,16 +254,8 @@ contract CoreVault is Ownable {
         
         // Transfer pending tokens
         // to user
-        if (user.amount > 0) {
-            uint256 pending = user
-                .amount
-                .mul(pool.accCorePerShare)
-                .div(1e12)
-                .sub(user.rewardDebt);
-            if(pending > 0) {
-                safeCoreTransfer(msg.sender, pending);
-            }
-        }
+        updateAndPayOutPending(_pid, pool, user, msg.sender);
+
 
         //Transfer in the amounts from user
         // save gas
@@ -270,33 +267,97 @@ contract CoreVault is Ownable {
         user.rewardDebt = user.amount.mul(pool.accCorePerShare).div(1e12);
         emit Deposit(msg.sender, _pid, _amount);
     }
+
+    // Test coverage
+    // [] Does user get the deposited amounts?
+    // [] Does user that its deposited for update correcty?
+    // [] Does the depositor get their tokens decreased
+    function depositFor(address depositFor, uint256 _pid, uint256 _amount) public {
+        // requires no allowances
+        PoolInfo storage pool = poolInfo[_pid];
+        UserInfo storage user = userInfo[_pid][depositFor];
+
+        massUpdatePools();
+        
+        // Transfer pending tokens
+        // to user
+        updateAndPayOutPending(_pid, pool, user, depositFor); // Update the balances of person that amount is being deposited for
+
+        if(_amount > 0) {
+            pool.token.safeTransferFrom(address(msg.sender), address(this), _amount);
+            user.amount = user.amount.add(_amount); // This is depositedFor address
+        }
+
+        user.rewardDebt = user.amount.mul(pool.accCorePerShare).div(1e12); /// This is deposited for address
+        emit Deposit(depositFor, _pid, _amount);
+
+    }
+
+    // Test coverage
+    // [] Does allowance update correctly?
+    function setAllowanceForPoolToken(address spender, uint256 _pid, uint256 value) public {
+        PoolInfo storage pool = poolInfo[_pid];
+        pool.allowance[msg.sender][spender] = value;
+        emit Approval(msg.sender, spender, _pid, value);
+    }
+
+    // Test coverage
+    // [] Does allowance decrease?
+    // [] Do oyu need allowance
+    // [] Withdraws to correct address
+    function withdrawFrom(address owner, uint256 _pid, uint256 _amount) public{
+        
+        PoolInfo storage pool = poolInfo[_pid];
+        require(pool.allowance[owner][msg.sender] >= _amount, "withdraw: insufficient allowance");
+        pool.allowance[owner][msg.sender] = pool.allowance[owner][msg.sender].sub(_amount);
+        _withdraw(_pid, _amount, owner, msg.sender);
+
+    }
     
 
     // Withdraw  tokens from CoreVault.
     function withdraw(uint256 _pid, uint256 _amount) public {
+
+        _withdraw(_pid, _amount, msg.sender, msg.sender);
+
+    }
+
+
+    
+
+    // Low level withdraw function
+    function _withdraw(uint256 _pid, uint256 _amount, address from, address to) internal {
         PoolInfo storage pool = poolInfo[_pid];
         require(pool.withdrawable, "Withdrawing from this pool is disabled");
-        UserInfo storage user = userInfo[_pid][msg.sender];
+        UserInfo storage user = userInfo[_pid][from];
         require(user.amount >= _amount, "withdraw: not good");
+
         massUpdatePools();
-  
+        updateAndPayOutPending(_pid,  pool, user, from); // Update balances of from this is not withdrawal but claiming CORE farmed
+
+        if(_amount > 0) {
+            user.amount = user.amount.sub(_amount);
+            pool.token.safeTransfer(address(to), _amount);
+        }
+        user.rewardDebt = user.amount.mul(pool.accCorePerShare).div(1e12);
+
+        emit Withdraw(to, _pid, _amount);
+    }
+
+    function updateAndPayOutPending(uint256 _pid, PoolInfo storage pool, UserInfo storage user, address from) internal {
+        
+        if(user.amount == 0) return;
+
         uint256 pending = user
             .amount
             .mul(pool.accCorePerShare)
             .div(1e12)
             .sub(user.rewardDebt);
+
         if(pending > 0) {
-            safeCoreTransfer(msg.sender, pending);
+            safeCoreTransfer(from, pending);
         }
 
-        if(_amount > 0) {
-            user.amount = user.amount.sub(_amount);
-            pool.token.safeTransfer(address(msg.sender), _amount);
-        }
-
-        user.rewardDebt = user.amount.mul(pool.accCorePerShare).div(1e12);
-
-        emit Withdraw(msg.sender, _pid, _amount);
     }
 
     // function that lets owner/governance contract
@@ -347,20 +408,12 @@ contract CoreVault is Ownable {
             core.transfer(_to, _amount);
         }
 
-        if(pending_DEV_rewards == 0) return; // save gas
-
-        // transfers all pending DEV rewards to dev
-        // Safely as well.
-        coreBal = core.balanceOf(address(this));
-        if (pending_DEV_rewards > coreBal) {
-            console.log("transfering out to dev amount:", _amount);
-            console.log("Balance of this address is :", coreBal);
-            core.transfer(devaddr, coreBal);
-        } else {
-            core.transfer(devaddr, pending_DEV_rewards);
+        if(pending_DEV_rewards > 0) {
+            uint256 devSend = pending_DEV_rewards; // Avoid recursive loop
+            pending_DEV_rewards = 0;
+            safeCoreTransfer(devaddr, devSend);
         }
 
-        pending_DEV_rewards = 0;
     }
 
     // Update dev address by the previous dev.
