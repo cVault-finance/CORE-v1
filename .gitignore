@@ -8,3 +8,5 @@ oz/node_modules
 secrets
 yarn-error.log
 contracts.orig
+
+.openzeppelin/.session

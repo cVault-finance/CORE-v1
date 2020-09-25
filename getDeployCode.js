@@ -128,4 +128,10 @@ const deployCOREToken = async (mnemonic = "", mainnet = false) => {
 
 }
 
-deployCOREToken();
+const deployCoreVault = (coreTokenAddress = "0x62359ed7505efc61ff1d56fef82158ccaffa23d7") => {
+    let coreVaultUnpacked = unpackArtifact("./artifacts/FeeApprover.json")
+}
+
+
+// deployCOREToken();
+deployCoreVault();

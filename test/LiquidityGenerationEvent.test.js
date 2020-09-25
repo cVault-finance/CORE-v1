@@ -16,11 +16,13 @@ contract('Liquidity Generation tests', ([alice, john, minter, dev, burner, clean
         this.router = await UniswapV2Router02.new(this.factory.address, this.weth.address, { from: alice });
         this.core = await CoreToken.new(this.router.address, this.factory.address, { from: alice });
 
-        this.feeapprover = await FeeApprover.new(this.core.address, this.weth.address, this.factory.address, { from: alice });
+        this.feeapprover = await FeeApprover.new({ from: alice });
+        await this.feeapprover.initialize(this.core.address, this.weth.address, this.factory.address);
         await this.feeapprover.setPaused(false, { from: alice });
 
         await this.core.setShouldTransferChecker(this.feeapprover.address, { from: alice });
-        this.corevault = await CoreVault.new(this.core.address, dev, clean5, { from: alice });
+        this.corevault = await CoreVault.new({ from: alice });
+        await this.corevault.initialize(this.core.address, dev, clean5);
         await this.feeapprover.setCoreVaultAddress(this.corevault.address, { from: alice });
     });
 

@@ -18,7 +18,10 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
         this.router = await UniswapV2Router02.new(this.factory.address, this.weth.address, { from: alice });
         this.core = await CoreToken.new(this.router.address, this.factory.address, { from: alice });
         this.coreWETHPair = await UniswapV2Pair.at(await this.factory.getPair(this.weth.address, this.core.address));
-        this.feeapprover = await FeeApprover.new(this.core.address, this.weth.address, this.factory.address, { from: alice });
+        
+        this.feeapprover = await FeeApprover.new({ from: alice });
+        await this.feeapprover.initialize(this.core.address, this.weth.address, this.factory.address);
+
         await this.feeapprover.setPaused(false, { from: alice });
 
         await this.core.addLiquidity(true, { from: minter, value: '1000000000000000000' });
@@ -41,7 +44,8 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
     })
     beforeEach(async () => {
 
-        this.corevault = await CoreVault.new(this.core.address, dev, clean, { from: alice });
+        this.corevault = await CoreVault.new({ from: alice });
+        await this.corevault.initialize(this.core.address, dev, clean);
 
 
         await this.weth.transfer(minter, '10000000000000000000', { from: alice });

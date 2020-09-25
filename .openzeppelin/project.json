@@ -1,0 +1,26 @@
+{
+  "manifestVersion": "2.2",
+  "contracts": {
+    "CoreVault": "CoreVault"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts-ethereum-package": "^3.0.0"
+  },
+  "name": "corevault",
+  "version": "1.0.0",
+  "compiler": {
+    "compilerSettings": {
+      "optimizer": {
+        "enabled": false,
+        "runs": "200"
+      }
+    },
+    "typechain": {
+      "enabled": false
+    },
+    "manager": "truffle",
+    "artifactsDir": "build/contracts",
+    "contractsDir": "contracts"
+  },
+  "telemetryOptIn": false
+}
