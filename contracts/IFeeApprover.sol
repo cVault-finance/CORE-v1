@@ -24,6 +24,7 @@ interface IFeeApprover {
         uint256 amount
     ) external  returns (uint256 transferToAmount, uint256 transferToFeeBearerAmount);
 
+    function setPaused() external;
  
 
 }
