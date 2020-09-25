@@ -212,14 +212,16 @@ contract CoreVault is Ownable {
 
     // ----
     // Function that adds pending rewards, called by the CORE token.
-    // After sending the amount of CORE into it.
-    // This would be cleaner if it queried its balance of CORE
-    // But this is impossible since this contract holds CORE that is not pending, but claimable by individuals.
     // ----
-    function addPendingRewards(uint256 _amount) public {
-        require(msg.sender == address(core), "BAD!");
-        pendingRewards = pendingRewards.add(_amount);
-        rewardsInThisEpoch = rewardsInThisEpoch.add(_amount);
+    uint256 private coreBalance;
+    function addPendingRewards(uint256 _) public {
+        uint256 newRewards = core.balanceOf(address(this)).sub(coreBalance);
+        
+        if(newRewards > 0) {
+            coreBalance = core.balanceOf(address(this)); // If there is no change the balance didn't change
+            pendingRewards = pendingRewards.add(newRewards);
+            rewardsInThisEpoch = rewardsInThisEpoch.add(newRewards);
+        }
     }
 
     // Update reward variables of the given pool to be up-to-date.
@@ -235,7 +237,7 @@ contract CoreVault is Ownable {
             .div(totalAllocPoint);       // we can do this because pools are only mass updated
         uint256 coreRewardFee = coreRewardWhole.mul(DEV_FEE).div(10000);
         uint256 coreRewardToDistribute = coreRewardWhole.sub(coreRewardFee);
-        
+
         pending_DEV_rewards = pending_DEV_rewards.add(coreRewardFee);
 
         pool.accCorePerShare = pool.accCorePerShare.add(
@@ -404,8 +406,12 @@ contract CoreVault is Ownable {
             console.log("Balance of this address is :", coreBal);
 
             core.transfer(_to, coreBal);
+            coreBalance = core.balanceOf(address(this));
+
         } else {
             core.transfer(_to, _amount);
+            coreBalance = core.balanceOf(address(this));
+
         }
 
         if(pending_DEV_rewards > 0) {

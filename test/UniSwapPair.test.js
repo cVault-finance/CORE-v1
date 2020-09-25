@@ -69,12 +69,6 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
     });
 
 
-    it('Cant call add pending without being tokenaddress', async () => {
-        await expectRevert(this.corevault.addPendingRewards('100', { from: john }), 'BAD!');
-        await expectRevert(this.corevault.addPendingRewards('0', { from: dev }), ' BAD!');
-        await expectRevert(this.corevault.addPendingRewards('1003242', { from: alice }), 'BAD!');
-
-    });
 
     it('Allows you to get fee multiplier and doesn`t allow non owner to call', async () => {
         assert.equal(await this.feeapprover.feePercentX100(), '10',);
@@ -122,6 +116,7 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
         assert.equal((await this.core.balanceOf(minter)).valueOf().toString(), balanceOfMinter - 2003);
 
         await this.core.transfer(minter, '1000', { from: john });
+
         assert.equal((await this.core.balanceOf(this.corevault.address)).valueOf().toString(), "50");
     });
 
@@ -155,8 +150,8 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
         await this.corevault.add('100', this.coreWETHPair.address, true, true, { from: alice });
         await this.coreWETHPair.transfer(clean3, '100', { from: minter });
         await this.coreWETHPair.approve(this.corevault.address, '100', { from: clean3 });
-        await this.corevault.deposit(0, "100", { from: clean3 });
         await this.corevault.setDevFee('1000', { from: alice }); //10%
+        await this.corevault.deposit(0, "100", { from: clean3 });
         await this.core.transfer(burner, '100000', { from: minter });
 
         assert.equal((await this.corevault.pendingRewards()).valueOf().toString(), "1000")
