@@ -1,4 +1,5 @@
 /node_modules
+oz/node_modules
 /build
 /cache
 /artifacts
@@ -6,3 +7,4 @@
 /artifacts
 secrets
 yarn-error.log
+contracts.orig
