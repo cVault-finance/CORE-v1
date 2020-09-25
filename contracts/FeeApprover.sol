@@ -1,20 +1,22 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.6.0;
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
+import "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol"; // for WETH
 import "@nomiclabs/buidler/console.sol";
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
+import "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol";
 
-contract FeeApprover is Ownable {
+contract FeeApprover is OwnableUpgradeSafe {
     using SafeMath for uint256;
 
-    constructor(
+    function initialize(
         address _COREAddress,
         address _WETHAddress,
         address _uniswapFactory
-    ) public {
+    ) public initializer {
+        OwnableUpgradeSafe.__Ownable_init();
         coreTokenAddress = _COREAddress;
         WETHAddress = _WETHAddress;
         tokenUniswapPair = IUniswapV2Factory(_uniswapFactory).getPair(WETHAddress,coreTokenAddress);

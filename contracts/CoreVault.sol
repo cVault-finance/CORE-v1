@@ -1,17 +1,17 @@
 pragma solidity 0.6.12;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import "@openzeppelin/contracts/utils/EnumerableSet.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "./CORE.sol";
-import "@nomiclabs/buidler/console.sol";
 
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/SafeERC20.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/utils/EnumerableSet.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol";
+import "./INBUNIERC20.sol";
+import "@nomiclabs/buidler/console.sol";
 
 // Core Vault distributes fees equally amongst staked pools
 // Have fun reading it. Hopefully it's bug-free. God bless.
-contract CoreVault is Ownable {
+contract CoreVault is OwnableUpgradeSafe {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
@@ -44,7 +44,7 @@ contract CoreVault is Ownable {
     }
 
     // The CORE TOKEN!
-    CORE public core;
+    INBUNIERC20 public core;
     // Dev address.
     address public devaddr;
 
@@ -53,7 +53,7 @@ contract CoreVault is Ownable {
     // Info of each user that stakes  tokens.
     mapping(uint256 => mapping(address => UserInfo)) public userInfo;
     // Total allocation poitns. Must be the sum of all allocation points in all pools.
-    uint256 public totalAllocPoint = 0;
+    uint256 public totalAllocPoint;
 
     //// pending rewards awaiting anyone to massUpdate
     uint256 public pendingRewards;
@@ -98,11 +98,13 @@ contract CoreVault is Ownable {
     event Approval(address indexed owner, address indexed spender, uint256 _pid, uint256 value);
 
 
-    constructor(
-        CORE _core,
+    function initialize(
+        INBUNIERC20 _core,
         address _devaddr, 
         address superAdmin
-    ) public {
+    ) public initializer {
+        OwnableUpgradeSafe.__Ownable_init();
+        DEV_FEE = 724;
         core = _core;
         devaddr = _devaddr;
         contractStartBlock = block.number;
@@ -177,7 +179,7 @@ contract CoreVault is Ownable {
     // Sets the dev fee for this contract
     // defaults at 7.24%
     // Note contract owner is meant to be a governance contract allowing CORE governance consensus
-    uint16 DEV_FEE = 724;
+    uint16 DEV_FEE;
     function setDevFee(uint16 _DEV_FEE) public onlyOwner {
         require(_DEV_FEE <= 1000, 'Dev fee clamped at 10%');
         DEV_FEE = _DEV_FEE;
