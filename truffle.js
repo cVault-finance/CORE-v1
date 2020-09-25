@@ -1,5 +1,7 @@
 const LedgerWalletProvider = require('truffle-ledger-provider');
-const INFURA_APIKEY = process.env.INFURA_APIKEY;
+
+console.log(INFURA_APIKEY);
+
 const kovanLedgerOptions = {
   networkId: 42, // mainnet
   // path: "44'/60'/0'/0", // ledger default derivation path
@@ -7,10 +9,20 @@ const kovanLedgerOptions = {
   askConfirm: false,
   accountsLength: 1,
   accountsOffset: 0,
+  gasPrice: 100000000000
+};
+const mainnetLedgerOptions = {
+  networkId: 1, // mainnet
+  // path: "44'/60'/0'/0", // ledger default derivation path
+  path: "44'/60'/0'/0/0", // ledger default derivation path
+  askConfirm: false,
+  accountsLength: 1,
+  accountsOffset: 0,
+  gasPrice: 100000000000
 };
 
 const kovanProvider = new LedgerWalletProvider(kovanLedgerOptions, `https://kovan.infura.io/v3/${INFURA_APIKEY}`);
-const mainnetProvider = new LedgerWalletProvider(kovanLedgerOptions, `https://mainnet.infura.io/v3/${INFURA_APIKEY}`);
+const mainnetProvider = new LedgerWalletProvider(mainnetLedgerOptions, `https://mainnet.infura.io/v3/${INFURA_APIKEY}`);
 
 module.exports = {
   networks: {
@@ -27,10 +39,11 @@ module.exports = {
       network_id: 42,
       gas: 4600000,
     },
-    kovan: {
+    mainnet: {
       provider: mainnetProvider,
       network_id: 1,
-      gas: 4600000,
+      gas: 9999999,
+      gasPrice: 100000000000
     }
   },
   compilers: {
