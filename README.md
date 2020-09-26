@@ -6,11 +6,17 @@ CORE tokens holders will be able to provide strategy contracts and vote on what 
 
 ## Live Contracts
 
+CORE Contracts:
  - [CORE Token - 0x62359ed7505efc61ff1d56fef82158ccaffa23d7](https://etherscan.io/address/0x62359ed7505efc61ff1d56fef82158ccaffa23d7)
- - [CoreVault Proxy - 0xc5cacb708425961594b63ec171f4df27a9c0d8c9](https://etherscan.io/address/0xc5cacb708425961594b63ec171f4df27a9c0d8c9)
- - [Team Proxy Admin - 0x9cb1eeccd165090a4a091209e8c3a353954b1f0f](https://etherscan.io/address/0x9cb1eeccd165090a4a091209e8c3a353954b1f0f)
- - [CoreVault Default Implementation - 0xd0ea2a4771e7ce09f2cc02d69ebf9d41a85cf161](https://etherscan.io/address/0xd0ea2a4771e7ce09f2cc02d69ebf9d41a85cf161)
+ - [CoreVault (Proxied) - 0xc5cacb708425961594b63ec171f4df27a9c0d8c9](https://etherscan.io/address/0xc5cacb708425961594b63ec171f4df27a9c0d8c9)
+ 
+ Governance Contracts:
+ - [CoreVault Original Implementation - 0xd0ea2a4771e7ce09f2cc02d69ebf9d41a85cf161](https://etherscan.io/address/0xd0ea2a4771e7ce09f2cc02d69ebf9d41a85cf161)
  - [Fee Approver - 0x1d0db0a5f9f8cf5b69f804d556176c6bc9186587](https://etherscan.io/address/0x1d0db0a5f9f8cf5b69f804d556176c6bc9186587)
+ - [Team Proxy Admin - 0x9cb1eeccd165090a4a091209e8c3a353954b1f0f](https://etherscan.io/address/0x9cb1eeccd165090a4a091209e8c3a353954b1f0f)
+
+Ecosystem Contracts:
+ - [Uniswap CORE/WETH UNI-V2 LP Token Contract](https://etherscan.io/address/0x32ce7e48debdccbfe0cd037cc89526e4382cb81b)
 
 
 # Initial Distribution
