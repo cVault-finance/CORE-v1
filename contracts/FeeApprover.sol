@@ -24,7 +24,7 @@ contract FeeApprover is OwnableUpgradeSafe {
         paused = true; // We start paused until sync post LGE happens.
         _editNoFeeList(0xC5cacb708425961594B63eC171f4df27a9c0d8c9, true); // corevault proxy
         _editNoFeeList(tokenUniswapPair, true);
-        updateTxState();
+        sync();
     }
 
 
@@ -43,7 +43,7 @@ contract FeeApprover is OwnableUpgradeSafe {
     // CORE token is pausable 
     function setPaused(bool _pause) public onlyOwner {
         paused = _pause;
-        updateTxState();
+        sync();
     }
 
     function setFeeMultiplier(uint8 _feeMultiplier) public onlyOwner {
@@ -61,9 +61,12 @@ contract FeeApprover is OwnableUpgradeSafe {
     function _editNoFeeList(address _address, bool noFee) internal{
         noFeeList[_address] = noFee;
     }
+    uint minFinney; // 2x for $ liq amount
+    function setMinimumLiquidityToTriggerStop(uint finneyAmnt) public onlyOwner{ // 1000 = 1eth
+        minFinney = finneyAmnt;
+    }
 
-
-    function updateTxState() public returns (bool lastIsMint, bool lpTokenBurn) {
+    function sync() public returns (bool lastIsMint, bool lpTokenBurn) {
 
         // This will update the state of lastIsMint, when called publically
         // So we have to sync it before to the last LP token value.
@@ -74,7 +77,10 @@ contract FeeApprover is OwnableUpgradeSafe {
         uint256 _balanceWETH = IERC20(WETHAddress).balanceOf(tokenUniswapPair);
         uint256 _balanceCORE = IERC20(coreTokenAddress).balanceOf(tokenUniswapPair);
 
-        lastIsMint = _balanceCORE > lastSupplyOfCoreInPair && _balanceWETH >lastSupplyOfWETHInPair;
+        // Do not block after small liq additions
+        // you can only withdraw 350$ now with front running
+        // And cant front run buys with liq add ( adversary drain )
+        lastIsMint = _balanceCORE > lastSupplyOfCoreInPair && _balanceWETH.add(minFinney.mul(1 finney)) >lastSupplyOfWETHInPair;
 
         lastSupplyOfCoreInPair = _balanceCORE;
         lastSupplyOfWETHInPair = _balanceWETH;
@@ -88,7 +94,7 @@ contract FeeApprover is OwnableUpgradeSafe {
         ) public  returns (uint256 transferToAmount, uint256 transferToFeeDistributorAmount) 
         {
             require(paused == false, "FEE APPROVER: Transfers Paused");
-            (bool lastIsMint, bool lpTokenBurn) = updateTxState();
+            (bool lastIsMint, bool lpTokenBurn) = sync();
 
             if(sender == tokenUniswapPair) {
                 // This will block buys that are immidietly after a mint. Before sync is called/
