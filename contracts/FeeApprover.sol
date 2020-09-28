@@ -25,6 +25,7 @@ contract FeeApprover is OwnableUpgradeSafe {
         _editNoFeeList(0xC5cacb708425961594B63eC171f4df27a9c0d8c9, true); // corevault proxy
         _editNoFeeList(tokenUniswapPair, true);
         sync();
+        minFinney = 500;
     }
 
 
