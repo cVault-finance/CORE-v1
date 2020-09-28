@@ -1,0 +1,10 @@
+deposit(uint256,uint256)                                    e2bbb158e
+massUpdatePools()                                           630b5ba
+updateAndPayOutPending(uint256,PoolInfo,UserInfo,address)   9e37bd
+safeTransfer(IERC20,address,uint256)                        d0c407e
+sub(uint256,uint256)                                        b67d77c
+balanceOf(address)                                          70a08231
+transfer(address,uint256)                                   a9059cb
+_transfer(address,address,uint256)                          30e0789ed
+calculateAmountsAfterFee(address,address,uint256)           301a5801
+pendingCore(uint256,address)                                a4f00c82
