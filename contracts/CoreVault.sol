@@ -189,7 +189,7 @@ contract CoreVault is OwnableUpgradeSafe {
 
     // View function to see pending COREs on frontend.
     function pendingCore(uint256 _pid, address _user)
-        external
+        public
         view
         returns (uint256)
     {
@@ -258,7 +258,8 @@ contract CoreVault is OwnableUpgradeSafe {
         
         // Transfer pending tokens
         // to user
-        updateAndPayOutPending(_pid, pool, user, msg.sender);
+        updateAndPayOutPending(_pid, msg.sender);
+
 
 
         //Transfer in the amounts from user
@@ -267,6 +268,7 @@ contract CoreVault is OwnableUpgradeSafe {
             pool.token.safeTransferFrom(address(msg.sender), address(this), _amount);
             user.amount = user.amount.add(_amount);
         }
+
 
         user.rewardDebt = user.amount.mul(pool.accCorePerShare).div(1e12);
         emit Deposit(msg.sender, _pid, _amount);
@@ -285,7 +287,7 @@ contract CoreVault is OwnableUpgradeSafe {
         
         // Transfer pending tokens
         // to user
-        updateAndPayOutPending(_pid, pool, user, depositFor); // Update the balances of person that amount is being deposited for
+        updateAndPayOutPending(_pid, depositFor); // Update the balances of person that amount is being deposited for
 
         if(_amount > 0) {
             pool.token.safeTransferFrom(address(msg.sender), address(this), _amount);
@@ -337,7 +339,7 @@ contract CoreVault is OwnableUpgradeSafe {
         require(user.amount >= _amount, "withdraw: not good");
 
         massUpdatePools();
-        updateAndPayOutPending(_pid,  pool, user, from); // Update balances of from this is not withdrawal but claiming CORE farmed
+        updateAndPayOutPending(_pid, from); // Update balances of from this is not withdrawal but claiming CORE farmed
 
         if(_amount > 0) {
             user.amount = user.amount.sub(_amount);
@@ -348,15 +350,10 @@ contract CoreVault is OwnableUpgradeSafe {
         emit Withdraw(to, _pid, _amount);
     }
 
-    function updateAndPayOutPending(uint256 _pid, PoolInfo storage pool, UserInfo storage user, address from) internal {
-        
-        if(user.amount == 0) return;
+    function updateAndPayOutPending(uint256 _pid, address from) internal {
 
-        uint256 pending = user
-            .amount
-            .mul(pool.accCorePerShare)
-            .div(1e12)
-            .sub(user.rewardDebt);
+
+        uint256 pending = pendingCore(_pid, from);
 
         if(pending > 0) {
             safeCoreTransfer(from, pending);
@@ -400,13 +397,10 @@ contract CoreVault is OwnableUpgradeSafe {
 
     // Safe core transfer function, just in case if rounding error causes pool to not have enough COREs.
     function safeCoreTransfer(address _to, uint256 _amount) internal {
-        if(_amount == 0) return; 
 
         uint256 coreBal = core.balanceOf(address(this));
+        
         if (_amount > coreBal) {
-            console.log("transfering out for to person:", _amount);
-            console.log("Balance of this address is :", coreBal);
-
             core.transfer(_to, coreBal);
             coreBalance = core.balanceOf(address(this));
 
@@ -415,13 +409,30 @@ contract CoreVault is OwnableUpgradeSafe {
             coreBalance = core.balanceOf(address(this));
 
         }
+        //Avoids possible recursion loop
+        // proxy?
+        transferDevFee();
 
-        if(pending_DEV_rewards > 0) {
-            uint256 devSend = pending_DEV_rewards; // Avoid recursive loop
-            pending_DEV_rewards = 0;
-            safeCoreTransfer(devaddr, devSend);
+    }
+
+
+    function transferDevFee() public {
+        if(pending_DEV_rewards == 0) return;
+
+        uint256 coreBal = core.balanceOf(address(this));
+        if (pending_DEV_rewards > coreBal) {
+
+            core.transfer(devaddr, coreBal);
+            coreBalance = core.balanceOf(address(this));
+
+        } else {
+
+            core.transfer(devaddr, pending_DEV_rewards);
+            coreBalance = core.balanceOf(address(this));
+
         }
 
+        pending_DEV_rewards = 0;
     }
 
     // Update dev address by the previous dev.
