@@ -1,7 +1,7 @@
 {
   "contracts": {
     "CoreVault": {
-      "address": "0x2241919669c05fe2Afd3F5D23Eb52615941D510d",
+      "address": "0x97a97908748285A0D0856D0A61909bAd572b2Fd4",
       "constructorCode": "608060405234801561001057600080fd5b5061443f806100206000396000f3fe",
       "bodyBytecodeHash": "ac8ed5d0c8e568a7513f6452a6fef791516550ae435a123edfb89488eaa670db",
       "localBytecodeHash": "d07e55c845a39527ca63ec3cf737ef0dc98e05d805dc81c476e7707b81128478",
@@ -308,10 +308,10 @@
   "proxies": {
     "corevault/CoreVault": [
       {
-        "address": "0xaC6Bb145D749FD867d383c5779f6aDAe0a12c291",
+        "address": "0xc4336CDca29A1244f63D9C911239bDd5028F850d",
         "version": "1.0.0",
-        "implementation": "0x2241919669c05fe2Afd3F5D23Eb52615941D510d",
-        "admin": "0x55E16bbd61550572F30580D51abc8fc2e21246B7",
+        "implementation": "0x97a97908748285A0D0856D0A61909bAd572b2Fd4",
+        "admin": "0x2241919669c05fe2Afd3F5D23Eb52615941D510d",
         "kind": "Upgradeable"
       }
     ]
@@ -320,11 +320,11 @@
   "version": "1.0.0",
   "dependencies": {
     "@openzeppelin/contracts-ethereum-package": {
-      "package": "0x778dddF23Ec1B5Cb18394c6C110480CaaDB3B0f6",
+      "package": "0xB6F8F11b166D526932ee04ffe4D25B810f619E34",
       "version": "3.0.0"
     }
   },
   "proxyAdmin": {
-    "address": "0x55E16bbd61550572F30580D51abc8fc2e21246B7"
+    "address": "0x2241919669c05fe2Afd3F5D23Eb52615941D510d"
   }
 }

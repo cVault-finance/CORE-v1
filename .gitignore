@@ -8,5 +8,5 @@ oz/node_modules
 secrets
 yarn-error.log
 contracts.orig
-
+Proxy/node_modules
 .openzeppelin/.session

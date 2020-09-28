@@ -7,7 +7,14 @@ module.exports = {
   },
   networks: {
     buidlerevm: {
-      allowUnlimitedContractSize: true
+      allowUnlimitedContractSize: true,
+      settings: {
+        optimizer: {
+          enabled: true,
+          runs: 200
+        },
+        evmVersion: "byzantium"
+       }
     },
   }
 };
