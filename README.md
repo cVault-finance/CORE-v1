@@ -1,3 +1,7 @@
+# How to build
+
+Here to fork CORE? I wish you the best of luck. Please add build steps in your fork and open a PR. It's the least you can do, right?
+
 # Introducing CORE
 
 CORE is a *non-inflationary* *cryptocurrency* that is designed to execute profit-generating strategies autonomously with a completely decentralized approach. In existing autonomous strategy-executing platforms a team or single developer is solely responsible for determining how locked funds are used to generate ROI. This is hazardous to the health of the fund as it grows, as it creates flawed incentives, and invites mistakes to be made. CORE does away with this dynamic and instead opts for one with decentralized governance.
