@@ -300,6 +300,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
                 (amountA, amountB) = (amountAOptimal, amountBDesired);
             }
         }
+        feeApprover.sync(10);
     }
     function addLiquidity(
         address tokenA,
@@ -313,9 +314,10 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
     ) external virtual override ensure(deadline) returns (uint amountA, uint amountB, uint liquidity) {
         (amountA, amountB) = _addLiquidity(tokenA, tokenB, amountADesired, amountBDesired, amountAMin, amountBMin);
         address pair = UniswapV2Library.pairFor(factory, tokenA, tokenB);
-        TransferHelper.safeTransferFrom(tokenA, msg.sender, pair, amountA);
-        TransferHelper.safeTransferFrom(tokenB, msg.sender, pair, amountB);
+        TransferHelper.safeTransferFrom(tokenA, msg.sender, pair, amountA, feeApprover);
+        TransferHelper.safeTransferFrom(tokenB, msg.sender, pair, amountB, feeApprover);
         liquidity = IUniswapV2Pair(pair).mint(to);
+        feeApprover.sync(11);
     }
     function addLiquidityETH(
         address token,
@@ -334,12 +336,13 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
             amountETHMin
         );
         address pair = UniswapV2Library.pairFor(factory, token, WETH);
-        TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken);
+        TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken, feeApprover);
         IWETH(WETH).deposit{value: amountETH}();
         assert(IWETH(WETH).transfer(pair, amountETH));
         liquidity = IUniswapV2Pair(pair).mint(to);
         // refund dust eth, if any
-        if (msg.value > amountETH) TransferHelper.safeTransferETH(msg.sender, msg.value - amountETH);
+        if (msg.value > amountETH) TransferHelper.safeTransferETH(msg.sender, msg.value - amountETH, feeApprover);
+        feeApprover.sync(12);
     }
 
     // **** REMOVE LIQUIDITY ****
@@ -359,6 +362,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         (amountA, amountB) = tokenA == token0 ? (amount0, amount1) : (amount1, amount0);
         require(amountA >= amountAMin, 'UniswapV2Router: INSUFFICIENT_A_AMOUNT');
         require(amountB >= amountBMin, 'UniswapV2Router: INSUFFICIENT_B_AMOUNT');
+        feeApprover.sync(13);
     }
     function removeLiquidityETH(
         address token,
@@ -377,9 +381,10 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
             address(this),
             deadline
         );
-        TransferHelper.safeTransfer(token, to, amountToken);
+        TransferHelper.safeTransfer(token, to, amountToken, feeApprover);
         IWETH(WETH).withdraw(amountETH);
-        TransferHelper.safeTransferETH(to, amountETH);
+        TransferHelper.safeTransferETH(to, amountETH, feeApprover);
+        feeApprover.sync(14);
     }
     function removeLiquidityWithPermit(
         address tokenA,
@@ -395,6 +400,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         uint value = approveMax ? uint(-1) : liquidity;
         IUniswapV2Pair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         (amountA, amountB) = removeLiquidity(tokenA, tokenB, liquidity, amountAMin, amountBMin, to, deadline);
+        feeApprover.sync(15);
     }
     function removeLiquidityETHWithPermit(
         address token,
@@ -409,6 +415,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         uint value = approveMax ? uint(-1) : liquidity;
         IUniswapV2Pair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         (amountToken, amountETH) = removeLiquidityETH(token, liquidity, amountTokenMin, amountETHMin, to, deadline);
+        feeApprover.sync(16);
     }
 
     // **** REMOVE LIQUIDITY (supporting fee-on-transfer tokens) ****
@@ -429,9 +436,10 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
             address(this),
             deadline
         );
-        TransferHelper.safeTransfer(token, to, IERC20(token).balanceOf(address(this)));
+        TransferHelper.safeTransfer(token, to, IERC20(token).balanceOf(address(this)), feeApprover);
         IWETH(WETH).withdraw(amountETH);
-        TransferHelper.safeTransferETH(to, amountETH);
+        TransferHelper.safeTransferETH(to, amountETH, feeApprover);
+        feeApprover.sync(17);
     }
     function removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
         address token,
@@ -448,6 +456,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         amountETH = removeLiquidityETHSupportingFeeOnTransferTokens(
             token, liquidity, amountTokenMin, amountETHMin, to, deadline
         );
+        feeApprover.sync(18);
     }
 
     // **** SWAP ****
@@ -463,6 +472,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
                 amount0Out, amount1Out, to, new bytes(0)
             );
         }
+        feeApprover.sync(19);
     }
     function swapExactTokensForTokens(
         uint amountIn,
@@ -474,9 +484,10 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         amounts = UniswapV2Library.getAmountsOut(factory, amountIn, path);
         require(amounts[amounts.length - 1] >= amountOutMin, 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
-            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]
+            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0], feeApprover
         );
         _swap(amounts, path, to);
+        feeApprover.sync(20);
     }
     function swapTokensForExactTokens(
         uint amountOut,
@@ -488,9 +499,10 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         amounts = UniswapV2Library.getAmountsIn(factory, amountOut, path);
         require(amounts[0] <= amountInMax, 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
-            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]
+            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0], feeApprover
         );
         _swap(amounts, path, to);
+        feeApprover.sync(21);
     }
     function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline)
         external
@@ -506,6 +518,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         IWETH(WETH).deposit{value: amounts[0]}();
         assert(IWETH(WETH).transfer(UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]));
         _swap(amounts, path, to);
+        feeApprover.sync(22);
     }
     function swapTokensForExactETH(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
         external
@@ -518,11 +531,12 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         amounts = UniswapV2Library.getAmountsIn(factory, amountOut, path);
         require(amounts[0] <= amountInMax, 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
-            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]
+            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0], feeApprover
         );
         _swap(amounts, path, address(this));
         IWETH(WETH).withdraw(amounts[amounts.length - 1]);
-        TransferHelper.safeTransferETH(to, amounts[amounts.length - 1]);
+        TransferHelper.safeTransferETH(to, amounts[amounts.length - 1], feeApprover);
+        feeApprover.sync(23);
     }
     function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
         external
@@ -535,11 +549,12 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         amounts = UniswapV2Library.getAmountsOut(factory, amountIn, path);
         require(amounts[amounts.length - 1] >= amountOutMin, 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
-            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]
+            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0], feeApprover
         );
         _swap(amounts, path, address(this));
         IWETH(WETH).withdraw(amounts[amounts.length - 1]);
-        TransferHelper.safeTransferETH(to, amounts[amounts.length - 1]);
+        TransferHelper.safeTransferETH(to, amounts[amounts.length - 1], feeApprover);
+        feeApprover.sync(24);
     }
     function swapETHForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)
         external
@@ -556,7 +571,8 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         assert(IWETH(WETH).transfer(UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]));
         _swap(amounts, path, to);
         // refund dust eth, if any
-        if (msg.value > amounts[0]) TransferHelper.safeTransferETH(msg.sender, msg.value - amounts[0]);
+        if (msg.value > amounts[0]) TransferHelper.safeTransferETH(msg.sender, msg.value - amounts[0], feeApprover);
+        feeApprover.sync(25);
     }
 
     // **** SWAP (supporting fee-on-transfer tokens) ****
@@ -578,6 +594,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
             address to = i < path.length - 2 ? UniswapV2Library.pairFor(factory, output, path[i + 2]) : _to;
             pair.swap(amount0Out, amount1Out, to, new bytes(0));
         }
+        feeApprover.sync(26);
     }
     function swapExactTokensForTokensSupportingFeeOnTransferTokens(
         uint amountIn,
@@ -587,7 +604,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         uint deadline
     ) external virtual override ensure(deadline) {
         TransferHelper.safeTransferFrom(
-            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amountIn
+            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amountIn, feeApprover
         );
         uint balanceBefore = IERC20(path[path.length - 1]).balanceOf(to);
         _swapSupportingFeeOnTransferTokens(path, to);
@@ -595,6 +612,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
             IERC20(path[path.length - 1]).balanceOf(to).sub(balanceBefore) >= amountOutMin,
             'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT'
         );
+        feeApprover.sync(27);
     }
     function swapExactETHForTokensSupportingFeeOnTransferTokens(
         uint amountOutMin,
@@ -618,6 +636,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
             IERC20(path[path.length - 1]).balanceOf(to).sub(balanceBefore) >= amountOutMin,
             'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT'
         );
+        feeApprover.sync(28);
     }
     function swapExactTokensForETHSupportingFeeOnTransferTokens(
         uint amountIn,
@@ -633,13 +652,14 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
     {
         require(path[path.length - 1] == WETH, 'UniswapV2Router: INVALID_PATH');
         TransferHelper.safeTransferFrom(
-            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amountIn
+            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amountIn, feeApprover
         );
         _swapSupportingFeeOnTransferTokens(path, address(this));
         uint amountOut = IERC20(WETH).balanceOf(address(this));
         require(amountOut >= amountOutMin, 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
         IWETH(WETH).withdraw(amountOut);
-        TransferHelper.safeTransferETH(to, amountOut);
+        TransferHelper.safeTransferETH(to, amountOut, feeApprover);
+        feeApprover.sync(29);
     }
 
     // **** LIBRARY FUNCTIONS ****
@@ -783,26 +803,30 @@ library UniswapV2Library {
 
 // helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
 library TransferHelper {
-    function safeApprove(address token, address to, uint value) internal {
+    function safeApprove(address token, address to, uint value, IFeeApprover feeApprover) internal {
         // bytes4(keccak256(bytes('approve(address,uint256)')));
         (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0x095ea7b3, to, value));
         require(success && (data.length == 0 || abi.decode(data, (bool))), 'TransferHelper: APPROVE_FAILED');
+        feeApprover.sync(30);
     }
 
-    function safeTransfer(address token, address to, uint value) internal {
+    function safeTransfer(address token, address to, uint value, IFeeApprover feeApprover) internal {
         // bytes4(keccak256(bytes('transfer(address,uint256)')));
         (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0xa9059cbb, to, value));
         require(success && (data.length == 0 || abi.decode(data, (bool))), 'TransferHelper: TRANSFER_FAILED');
+        feeApprover.sync(31);
     }
 
-    function safeTransferFrom(address token, address from, address to, uint value) internal {
+    function safeTransferFrom(address token, address from, address to, uint value, IFeeApprover feeApprover) internal {
         // bytes4(keccak256(bytes('transferFrom(address,address,uint256)')));
         (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0x23b872dd, from, to, value));
         require(success && (data.length == 0 || abi.decode(data, (bool))), 'TransferHelper: TRANSFER_FROM_FAILED');
+        feeApprover.sync(32);
     }
 
-    function safeTransferETH(address to, uint value) internal {
+    function safeTransferETH(address to, uint value, IFeeApprover feeApprover) internal {
         (bool success,) = to.call{value:value}(new bytes(0));
         require(success, 'TransferHelper: ETH_TRANSFER_FAILED');
+        feeApprover.sync(33);
     }
 }
