@@ -72,7 +72,7 @@ contract FeeApprover is OwnableUpgradeSafe {
         // This will update the state of lastIsMint, when called publically
         // So we have to sync it before to the last LP token value.
         uint256 _LPSupplyOfPairTotal = IERC20(tokenUniswapPair).totalSupply();
-        lpTokenBurn = lastTotalSupplyOfLPTokens <= _LPSupplyOfPairTotal;
+        lpTokenBurn = lastTotalSupplyOfLPTokens > _LPSupplyOfPairTotal;
         lastTotalSupplyOfLPTokens = _LPSupplyOfPairTotal;
 
         uint256 _balanceWETH = IERC20(WETHAddress).balanceOf(tokenUniswapPair);
@@ -81,6 +81,7 @@ contract FeeApprover is OwnableUpgradeSafe {
         // Do not block after small liq additions
         // you can only withdraw 350$ now with front running
         // And cant front run buys with liq add ( adversary drain )
+
         lastIsMint = _balanceCORE > lastSupplyOfCoreInPair && _balanceWETH > lastSupplyOfWETHInPair.add(minFinney.mul(1 finney));
 
         lastSupplyOfCoreInPair = _balanceCORE;
@@ -101,12 +102,8 @@ contract FeeApprover is OwnableUpgradeSafe {
                 // This will block buys that are immidietly after a mint. Before sync is called/
                 // Deployment of this should only happen after router deployment 
                 // And addition of sync to all CoreVault transactions to remove 99.99% of the cases.
-                          if(lastIsMint || lpTokenBurn) {
-                    console.log("reverting");
-                }
                 require(lastIsMint == false, "Liquidity withdrawals forbidden");
-                
-                require(lpTokenBurn, "Liquidity withdrawals forbidden");
+                require(lpTokenBurn == false, "Liquidity withdrawals forbidden");
       
             }
 

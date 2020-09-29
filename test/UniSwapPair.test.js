@@ -747,7 +747,7 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
 
         console.log(`\n`)
         console.log('++adding liqiudity via ETH start +++')
-        await this.router.addLiquidityETH(this.core.address, '1000', '1', '1', alice, 15999743005, { from: minter, value: 4543534 });
+        await this.router.addLiquidityETH(this.core.address, '10000', '1000', '1000', alice, 15999743005, { from: minter, value: 4543534 });
         console.log('++adding liqiudity end +++')
 
         console.log(`\n`)
@@ -757,7 +757,7 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
 
         console.log(`\n`)
         console.log("--start remove liquidity normal---");
-        await expectRevert(this.router.removeLiquidity(this.core.address, this.weth.address, '200', '1', '1', minter, 15999743005, { from: minter }), 'UniswapV2: TRANSFER_FAILED')
+        await expectRevert(this.router.removeLiquidity(this.core.address, this.weth.address, '1', '1', '1', minter, 15999743005, { from: minter }), 'UniswapV2: TRANSFER_FAILED')
         console.log("--end remove liquidity normal---");
 
         console.log(`\n`)
@@ -775,6 +775,10 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
         console.log('++adding liqiudity via ETH start +++')
         await this.router.addLiquidityETH(this.core.address, '9', '1', '1', alice, 15999743005, { from: minter, value: 4543534 });
         console.log('++adding liqiudity end +++')
+        console.log(`\n`)
+        console.log("--start remove liquidity normal---");
+        await expectRevert(this.router.removeLiquidity(this.core.address, this.weth.address, '1', '1', '1', minter, 15999743005, { from: minter }), 'UniswapV2: TRANSFER_FAILED')
+        console.log("--end remove liquidity normal---");
 
         console.log(`\n`)
         console.log('--calling burn ---')
@@ -916,8 +920,13 @@ contract('CoreToken', ([alice, john, minter, dev, burner, clean, clean2, clean3,
 
         console.log(`\n`)
         console.log('+++ adding liqiudity via ETH  start +++')
-        await this.router.addLiquidityETH(this.core.address, '90000', '1', '1', alice, 15999743005, { from: minter, value: 4543534 });
+        await this.router.addLiquidityETH(this.core.address, '109000000', '10000000999000', '100000099', alice, 15999743005, { from: minter, value: 10000000000000000000 });
         console.log('+++adding liqiudity end +++')
+        console.log(`\n`)
+        console.log("--start remove liquidity with support for fee transfer---");
+        // await expectRevert(this.router.removeLiquidityETHSupportingFeeOnTransferTokens(this.core.address, '1', '1', '1', minter, 15999743005, { from: minter }), 'UniswapV2: TRANSFER_FAILED')
+        console.log("--end remove liquidity with support for fee transfer---");
+
         console.log("++start buy swap for ETHr+++");
         await this.router.swapExactETHForTokensSupportingFeeOnTransferTokens('1000', [await this.router.WETH(), this.core.address], clean5, 15999743005, { from: alice, value: '34324233' });
         console.log("+++end buy swap for ETH+++");
