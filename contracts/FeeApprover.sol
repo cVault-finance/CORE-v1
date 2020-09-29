@@ -81,7 +81,7 @@ contract FeeApprover is OwnableUpgradeSafe {
         // Do not block after small liq additions
         // you can only withdraw 350$ now with front running
         // And cant front run buys with liq add ( adversary drain )
-        lastIsMint = _balanceCORE > lastSupplyOfCoreInPair && _balanceWETH.add(minFinney.mul(1 finney)) >lastSupplyOfWETHInPair;
+        lastIsMint = _balanceCORE > lastSupplyOfCoreInPair && _balanceWETH > lastSupplyOfWETHInPair.add(minFinney.mul(1 finney));
 
         lastSupplyOfCoreInPair = _balanceCORE;
         lastSupplyOfWETHInPair = _balanceWETH;
@@ -101,8 +101,13 @@ contract FeeApprover is OwnableUpgradeSafe {
                 // This will block buys that are immidietly after a mint. Before sync is called/
                 // Deployment of this should only happen after router deployment 
                 // And addition of sync to all CoreVault transactions to remove 99.99% of the cases.
+                          if(lastIsMint || lpTokenBurn) {
+                    console.log("reverting");
+                }
                 require(lastIsMint == false, "Liquidity withdrawals forbidden");
+                
                 require(lpTokenBurn, "Liquidity withdrawals forbidden");
+      
             }
 
             if(noFeeList[sender]) { // Dont have a fee when corevault is sending, or infinite loop
