@@ -10,6 +10,11 @@ CORE tokens holders will be able to provide strategy contracts and vote on what 
 
 ## Live Contracts
 
+*NEW*
+COREv1Router:
+ - [CORE v1 Router Proxy - 0x0ee460204887d98c297bb431e40b713f63ba78e0](https://etherscan.io/address/0x0ee460204887d98c297bb431e40b713f63ba78e0)
+ - [CORE v1 Router Original Implementation - 0xbeb3075d3c231d23b03face34f50edf1f8d53a77](https://etherscan.io/address/0xbeb3075d3c231d23b03face34f50edf1f8d53a77)
+
 CORE Contracts:
  - [CORE Token - 0x62359ed7505efc61ff1d56fef82158ccaffa23d7](https://etherscan.io/address/0x62359ed7505efc61ff1d56fef82158ccaffa23d7)
  - [CoreVault (Proxied) - 0xc5cacb708425961594b63ec171f4df27a9c0d8c9](https://etherscan.io/address/0xc5cacb708425961594b63ec171f4df27a9c0d8c9)
