@@ -12,7 +12,9 @@ CORE tokens holders will be able to provide strategy contracts and vote on what 
 
 *NEW*
 
-CORE v2 Globals:
+CORE v2:
+- [CORE LGE II Proxy - 0x0]()
+- [CORE LGE II Implementation - 0xa888494075cf7bc6f9c0956348fe206cffba4879](https://etherscan.io/address/0xa888494075cf7bc6f9c0956348fe206cffba4879)
 - [CORE v2 Globals Proxy - https://etherscan.io/address/0x255ca4596a963883afe0ef9c85ea071cc050128b](https://etherscan.io/address/0x255ca4596a963883afe0ef9c85ea071cc050128b)
 - [CORE v2 Globals Implementation - 0x20a3872597be26562d3873bfda8842ec7efa78ae](https://etherscan.io/address/0x20a3872597be26562d3873bfda8842ec7efa78ae)
 
