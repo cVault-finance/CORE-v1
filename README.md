@@ -11,6 +11,11 @@ CORE tokens holders will be able to provide strategy contracts and vote on what 
 ## Live Contracts
 
 *NEW*
+
+CORE v2 Globals:
+- [CORE v2 Globals Proxy - https://etherscan.io/address/0x255ca4596a963883afe0ef9c85ea071cc050128b](https://etherscan.io/address/0x255ca4596a963883afe0ef9c85ea071cc050128b)
+- [CORE v2 Globals Implementation - 0x20a3872597be26562d3873bfda8842ec7efa78ae](https://etherscan.io/address/0x20a3872597be26562d3873bfda8842ec7efa78ae)
+
 COREv1Router:
  - [CORE v1 Router Proxy - 0x0ee460204887d98c297bb431e40b713f63ba78e0](https://etherscan.io/address/0x0ee460204887d98c297bb431e40b713f63ba78e0)
  - [CORE v1 Router Original Implementation - 0xbeb3075d3c231d23b03face34f50edf1f8d53a77](https://etherscan.io/address/0xbeb3075d3c231d23b03face34f50edf1f8d53a77)
