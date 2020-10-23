@@ -16,7 +16,7 @@ CORE v2:
 - [CORE LGE II Proxy - 0xf7ca8f55c54cbb6d0965bc6d65c43adc500bc591](https://etherscan.io/address/0xf7ca8f55c54cbb6d0965bc6d65c43adc500bc591)
 - [CORE LGE II Implementation - 0xa888494075cf7bc6f9c0956348fe206cffba4879](https://etherscan.io/address/0xa888494075cf7bc6f9c0956348fe206cffba4879)
 - [CORE v2 Globals Proxy - https://etherscan.io/address/0x255ca4596a963883afe0ef9c85ea071cc050128b](https://etherscan.io/address/0x255ca4596a963883afe0ef9c85ea071cc050128b)
-- [CORE v2 Globals Implementation - 0x20a3872597be26562d3873bfda8842ec7efa78ae](https://etherscan.io/address/0x20a3872597be26562d3873bfda8842ec7efa78ae)
+- [CORE v2 Globals Implementation - 0x22cc20d703c356a542af3814a631fdac31460672](https://etherscan.io/address/0x22cc20d703c356a542af3814a631fdac31460672)
 
 COREv1Router:
  - [CORE v1 Router Proxy - 0x0ee460204887d98c297bb431e40b713f63ba78e0](https://etherscan.io/address/0x0ee460204887d98c297bb431e40b713f63ba78e0)
