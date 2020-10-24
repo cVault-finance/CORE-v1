@@ -20,6 +20,9 @@ CORE v2:
 - [cBTC Proxy: 0x7b5982dcab054c377517759d0d2a3a5d02615ab8](https://etherscan.io/address/0x7b5982dcab054c377517759d0d2a3a5d02615ab8)
 - [cBTC Implementation: 0xf3d513fa681ff6f8f7557533d19aea6a20b961f2](https://etherscan.io/address/0xf3d513fa681ff6f8f7557533d19aea6a20b961f2)
 
+ - [TransferHandler01 Implementation - 0x9E674Ca13C796A827901D8612Da80116502D54AF](https://etherscan.io/address/0x9E674Ca13C796A827901D8612Da80116502D54AF)
+ - [TransferHandler01 Proxy - 0x2e2A33CECA9aeF101d679ed058368ac994118E7a](https://etherscan.io/address/0x2e2A33CECA9aeF101d679ed058368ac994118E7a)
+
 COREv1Router:
  - [CORE v1 Router Proxy - 0x0ee460204887d98c297bb431e40b713f63ba78e0](https://etherscan.io/address/0x0ee460204887d98c297bb431e40b713f63ba78e0)
  - [CORE v1 Router Original Implementation - 0xbeb3075d3c231d23b03face34f50edf1f8d53a77](https://etherscan.io/address/0xbeb3075d3c231d23b03face34f50edf1f8d53a77)
