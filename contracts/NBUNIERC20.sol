@@ -204,6 +204,7 @@ contract NBUNIERC20 is Context, INBUNIERC20, Ownable {
         IWETH(WETH).deposit{value : totalETHContributed}();
         require(address(this).balance == 0 , "Transfer Failed");
         IWETH(WETH).transfer(address(pair),totalETHContributed);
+        emit Transfer(address(this), address(pair), _balances[address(this)]);
         _balances[address(pair)] = _balances[address(this)];
         _balances[address(this)] = 0;
         pair.mint(address(this));
