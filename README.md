@@ -20,7 +20,7 @@ CORE v2:
 - [CORE LGE II Proxy - 0xf7ca8f55c54cbb6d0965bc6d65c43adc500bc591](https://etherscan.io/address/0xf7ca8f55c54cbb6d0965bc6d65c43adc500bc591)
 - [CORE LGE II Implementation - 0x87Cde0888282084c4676FE973b62A10199297597](https://etherscan.io/address/0x87Cde0888282084c4676FE973b62A10199297597)
 - [CORE v2 Globals Proxy - https://etherscan.io/address/0x255ca4596a963883afe0ef9c85ea071cc050128b](https://etherscan.io/address/0x255ca4596a963883afe0ef9c85ea071cc050128b)
-- [CORE v2 Globals Implementation - 0x22cc20d703c356a542af3814a631fdac31460672](https://etherscan.io/address/0x22cc20d703c356a542af3814a631fdac31460672)
+- [CORE v2 Globals Implementation - 0xe22bbd638b24165206314f999ae27fec9e70dcf6](https://etherscan.io/address/0xe22bbd638b24165206314f999ae27fec9e70dcf6)
 - [cBTC Proxy: 0x7b5982dcab054c377517759d0d2a3a5d02615ab8](https://etherscan.io/address/0x7b5982dcab054c377517759d0d2a3a5d02615ab8)
 - [cBTC Implementation: 0xf3d513fa681ff6f8f7557533d19aea6a20b961f2](https://etherscan.io/address/0xf3d513fa681ff6f8f7557533d19aea6a20b961f2)
 
