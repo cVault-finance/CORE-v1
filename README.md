@@ -12,9 +12,12 @@ CORE tokens holders will be able to provide strategy contracts and vote on what 
 
 *NEW*
 
+FannyVault Proxy:
+- [FannyVault (Proxied) - 0xbb791bc6106e4d949863e2ab76fc01ac0a9d7816] (https://etherscan.io/address/0xbb791bc6106e4d949863e2ab76fc01ac0a9d7816)
+
 LGE 3:
-- [CORE LGE III [Proxied] - 0xaac50b95fbb13956d7c45511f24c3bf9e2a4a76b](https://etherscan.io/address/0xaac50b95fbb13956d7c45511f24c3bf9e2a4a76b)
-- [Fork Absorption Migrator [Proxied] - 0x5dca4093bfe88d6fd5511fb78f6a777d47314d35](https://etherscan.io/address/0x5dca4093bfe88d6fd5511fb78f6a777d47314d35)
+- [CORE LGE III (Proxied) - 0xaac50b95fbb13956d7c45511f24c3bf9e2a4a76b](https://etherscan.io/address/0xaac50b95fbb13956d7c45511f24c3bf9e2a4a76b)
+- [Fork Absorption Migrator (Proxied) - 0x5dca4093bfe88d6fd5511fb78f6a777d47314d35](https://etherscan.io/address/0x5dca4093bfe88d6fd5511fb78f6a777d47314d35)
 
 CORE v2:
 - [CORE LGE II Proxy - 0xf7ca8f55c54cbb6d0965bc6d65c43adc500bc591](https://etherscan.io/address/0xf7ca8f55c54cbb6d0965bc6d65c43adc500bc591)
