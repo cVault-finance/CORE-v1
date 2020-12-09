@@ -12,10 +12,14 @@ CORE tokens holders will be able to provide strategy contracts and vote on what 
 
 *NEW*
 
+LGE III (Part 2):
+ - [wCORE (Proxied) - 0x17b8c1a92b66b1cf3092c5d223cb3a129023b669](https://etherscan.io/address/0x17b8c1a92b66b1cf3092c5d223cb3a129023b669#code)
+ - [coreDAI (Proxied) - 0x00a66189143279b6db9b77294688f47959f37642](https://etherscan.io/address/0x00a66189143279b6db9b77294688f47959f37642#code)
+
 FannyVault Proxy:
 - [FannyVault (Proxied) - 0xbb791bc6106e4d949863e2ab76fc01ac0a9d7816](https://etherscan.io/address/0xbb791bc6106e4d949863e2ab76fc01ac0a9d7816)
 
-LGE 3:
+LGE III:
 - [CORE LGE III (Proxied) - 0xaac50b95fbb13956d7c45511f24c3bf9e2a4a76b](https://etherscan.io/address/0xaac50b95fbb13956d7c45511f24c3bf9e2a4a76b)
 - [Fork Absorption Migrator (Proxied) - 0x5dca4093bfe88d6fd5511fb78f6a777d47314d35](https://etherscan.io/address/0x5dca4093bfe88d6fd5511fb78f6a777d47314d35)
 
