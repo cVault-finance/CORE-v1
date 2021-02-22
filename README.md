@@ -12,6 +12,10 @@ CORE tokens holders will be able to provide strategy contracts and vote on what 
 
 *NEW*
 
+DELTA:
+ - [DELTA LSW - 0xdaFCE5670d3F67da9A3A44FE6bc36992e5E2beaB](https://etherscan.io/address/0xdafce5670d3f67da9a3a44fe6bc36992e5e2beab)
+ - [DELTA Multisig - 0xB2d834dd31816993EF53507Eb1325430e67beefa](https://etherscan.io/address/0xB2d834dd31816993EF53507Eb1325430e67beefa)
+
 LGE III (Part 2):
  - [wCORE (Proxied) - 0x17b8c1a92b66b1cf3092c5d223cb3a129023b669](https://etherscan.io/address/0x17b8c1a92b66b1cf3092c5d223cb3a129023b669#code)
  - [coreDAI (Proxied) - 0x00a66189143279b6db9b77294688f47959f37642](https://etherscan.io/address/0x00a66189143279b6db9b77294688f47959f37642#code)
