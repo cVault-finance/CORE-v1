@@ -35,7 +35,7 @@ CORE v2:
 - [cBTC Proxy: 0x7b5982dcab054c377517759d0d2a3a5d02615ab8](https://etherscan.io/address/0x7b5982dcab054c377517759d0d2a3a5d02615ab8)
 - [cBTC Implementation: 0xf3d513fa681ff6f8f7557533d19aea6a20b961f2](https://etherscan.io/address/0xf3d513fa681ff6f8f7557533d19aea6a20b961f2)
 
- - [TransferHandler01 Implementation - 0x025b275DD3b79Dc3b79E3F60D0A46516D2396059](https://etherscan.io/address/0x025b275dd3b79dc3b79e3f60d0a46516d2396059)
+ - [TransferHandler01 Implementation - 0xc0D019A4fFD6D1Ba7fbA6dE77Caa81af60586167](https://etherscan.io/address/0xc0D019A4fFD6D1Ba7fbA6dE77Caa81af60586167)
  - [TransferHandler01 Proxy - 0x2e2A33CECA9aeF101d679ed058368ac994118E7a](https://etherscan.io/address/0x2e2A33CECA9aeF101d679ed058368ac994118E7a)
 
 COREv1Router:
@@ -44,10 +44,10 @@ COREv1Router:
 
 CORE Contracts:
  - [CORE Token - 0x62359ed7505efc61ff1d56fef82158ccaffa23d7](https://etherscan.io/address/0x62359ed7505efc61ff1d56fef82158ccaffa23d7)
- - [CoreVault (Proxied) - 0xc5cacb708425961594b63ec171f4df27a9c0d8c9](https://etherscan.io/address/0xc5cacb708425961594b63ec171f4df27a9c0d8c9)
+ - [CoreVault Proxy - 0xC5cacb708425961594B63eC171f4df27a9c0d8c9](https://etherscan.io/address/0xC5cacb708425961594B63eC171f4df27a9c0d8c9)
+ - [CoreVault Implementation - 0x7ca9B4BAb4e16bEbEDCfF403f7397935d905f0D3](https://etherscan.io/address/0x7ca9B4BAb4e16bEbEDCfF403f7397935d905f0D3)
  
  Governance Contracts:
- - [CoreVault Original Implementation - 0xd0ea2a4771e7ce09f2cc02d69ebf9d41a85cf161](https://etherscan.io/address/0xd0ea2a4771e7ce09f2cc02d69ebf9d41a85cf161)
  - [Fee Approver - 0x1d0db0a5f9f8cf5b69f804d556176c6bc9186587](https://etherscan.io/address/0x1d0db0a5f9f8cf5b69f804d556176c6bc9186587)
  - [Team Proxy Admin - 0x9cb1eeccd165090a4a091209e8c3a353954b1f0f](https://etherscan.io/address/0x9cb1eeccd165090a4a091209e8c3a353954b1f0f)
 
