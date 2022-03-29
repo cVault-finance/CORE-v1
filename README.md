@@ -12,6 +12,10 @@ CORE tokens holders will be able to provide strategy contracts and vote on what 
 
 *NEW*
 
+CoreDEX:
+ - [CLEND - 0x54B276C8a484eBF2a244D933AF5FFaf595ea58c5](https://etherscan.io/address/0x54B276C8a484eBF2a244D933AF5FFaf595ea58c5)
+ - [Treasury - 0xe508a37101FCe81AB412626eE5F1A648244380de](https://etherscan.io/address/0xe508a37101FCe81AB412626eE5F1A648244380de)
+
 DELTA:
  - [DELTA LSW - 0xdaFCE5670d3F67da9A3A44FE6bc36992e5E2beaB](https://etherscan.io/address/0xdafce5670d3f67da9a3a44fe6bc36992e5e2beab)
  - [DELTA Multisig - 0xB2d834dd31816993EF53507Eb1325430e67beefa](https://etherscan.io/address/0xB2d834dd31816993EF53507Eb1325430e67beefa)
